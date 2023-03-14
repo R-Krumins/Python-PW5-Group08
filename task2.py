@@ -29,7 +29,7 @@ def get_top_credits():
 
 def get_awards():
     li_awards = soup.find('li', {'data-testid':'award_information'})
-    awards = li_awards.find('label').text
+    awards = li_awards.find('span').text
     print(f'\nAwards: {awards}')
 
 def get_cast():
