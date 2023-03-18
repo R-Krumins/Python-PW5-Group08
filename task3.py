@@ -21,31 +21,48 @@ def ask(prompt):
     while True:
         try:
             answer = float(input(prompt))
+            clearConsole()
             return str(answer)        
         except:
             clearLine()
             print('Error: Invalid input!')
 
- 
+def requestData(url):  
+    try:
+        return json.loads(urllib.request.urlopen(url).read().decode())['address']
+    except urllib.error.URLError:
+        print('Error: unable to fetch data. Check internet connection.')
+    except KeyError:
+        print('Error: invalid coordinates')
+    except:
+        print('Error: something went horribly wrong')
+    
+    print('\n\nPress <Enter> to retry!')
+    input()
+    return None
+    
+def clean(data):
+    data.pop('country_code')
+    data.pop('postcode')
+    
+    for k in data.keys():
+        if k.startswith('ISO'): 
+            data.pop(k)
+            break
+
+    
 def run():
     clearConsole()
-    lat = ask('Input lattitude: ')
-    clearConsole()
-    lon = ask('Input longtitude: ')
+    lat = ask('Input latitude: ')   
+    lon = ask('Input longitude: ')
 
-    url = 'https://nominatim.openstreetmap.org/reverse?lat=[x]&lon=[y]&format=json'.replace('[x]', lat).replace('[y]', lon)
-    clearConsole()
-    
-    try:
-        data= json.loads(urllib.request.urlopen(url).read().decode())['address']
-    except:
-        print('Error: Inavlid coordinates!')
-        print('\n\nPress <Enter> to retry!')
-        input()
-        return
+    url = 'https://nominatim.openstreetmap.org/reverse?lat={}&lon={}&format=json'.format(lat, lon)
+    data = requestData(url)
+    if data == None: return
 
-    
+    clean(data)
     printTable(data)
+    
     print('\n\nPress <Enter> to try new coordinates')
     input()
 
