@@ -42,8 +42,8 @@ def requestData(url):
     return None
     
 def clean(data):
-    data.pop('country_code')
-    data.pop('postcode')
+    data.pop('country_code', None)
+    data.pop('postcode', None)
     
     for k in data.keys():
         if k.startswith('ISO'): 
